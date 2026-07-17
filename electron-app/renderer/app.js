@@ -11,7 +11,27 @@
 
 'use strict';
 
-const VoIPCore = require('../../../core/src/index');
+// Catch any unhandled errors and show them in the UI
+window.onerror = (msg, src, line, col, err) => {
+  document.getElementById('connectError').textContent = `Error: ${msg}`;
+  console.error('[renderer error]', msg, err);
+};
+window.onunhandledrejection = (e) => {
+  document.getElementById('connectError').textContent = `Error: ${e.reason?.message || e.reason}`;
+  console.error('[unhandled promise]', e.reason);
+};
+
+let VoIPCore;
+try {
+  VoIPCore = require('../../core/src/index');
+  console.log('[app] VoIPCore loaded OK');
+} catch (e) {
+  console.error('[app] Failed to load VoIPCore:', e);
+  document.addEventListener('DOMContentLoaded', () => {
+    const el = document.getElementById('connectError');
+    if (el) el.textContent = 'Failed to load VoIP engine: ' + e.message;
+  });
+}
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
 
