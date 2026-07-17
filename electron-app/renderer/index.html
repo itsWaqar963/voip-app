@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src *; media-src *" />
+  <title>VoIP</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── Custom title bar (frameless window) ─────────────────────────────── -->
+  <div id="titlebar" class="titlebar">
+    <span class="titlebar-title">
+      <span class="logo-dot" id="statusDot"></span>
+      VoIP
+    </span>
+    <div class="titlebar-controls">
+      <button class="tb-btn" id="btnMinimize" title="Minimize">─</button>
+      <button class="tb-btn" id="btnClose"    title="Close to tray">✕</button>
+    </div>
+  </div>
+
+  <!-- ── Lobby / Connect screen ──────────────────────────────────────────── -->
+  <div id="screenConnect" class="screen active">
+    <div class="connect-box">
+      <h2 class="connect-title">Join a Room</h2>
+
+      <label class="field-label">Your name</label>
+      <input id="inputName"   class="field-input" type="text"
+             placeholder="Nawaz" maxlength="24" />
+
+      <label class="field-label">Room code</label>
+      <input id="inputRoom"   class="field-input" type="text"
+             placeholder="game-lobby" maxlength="32" />
+
+      <label class="field-label">Server URL</label>
+      <input id="inputServer" class="field-input" type="text"
+             placeholder="wss://your-server.railway.app" />
+
+      <div class="mode-row">
+        <label class="toggle-label">
+          <input type="checkbox" id="chkPTT" />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          Push-to-talk
+        </label>
+        <span class="mode-hint" id="pttHint">Hold Ctrl+Alt+V to speak</span>
+      </div>
+
+      <button id="btnJoin" class="btn btn-primary">Join</button>
+
+      <p id="connectError" class="error-msg"></p>
+    </div>
+  </div>
+
+  <!-- ── In-room screen ──────────────────────────────────────────────────── -->
+  <div id="screenRoom" class="screen">
+
+    <!-- Room header -->
+    <div class="room-header">
+      <div class="room-info">
+        <span class="room-icon">🎮</span>
+        <div>
+          <div class="room-name" id="roomName"></div>
+          <div class="room-sub"  id="roomSub">connecting…</div>
+        </div>
+      </div>
+      <button id="btnLeave" class="btn btn-danger btn-sm">Leave</button>
+    </div>
+
+    <!-- Peer list -->
+    <div class="peer-list" id="peerList">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Local user bar at the bottom -->
+    <div class="local-bar">
+      <div class="local-user">
+        <div class="avatar local-avatar" id="localAvatar">
+          <span class="avatar-initials" id="localInitials"></span>
+          <span class="speaking-ring" id="localRing"></span>
+        </div>
+        <div class="local-info">
+          <span class="local-name" id="localName"></span>
+          <span class="local-status" id="localStatus">open mic</span>
+        </div>
+      </div>
+
+      <div class="local-controls">
+        <!-- PTT button (shown in PTT mode) -->
+        <button id="btnPTT" class="btn btn-ptt" style="display:none"
+                title="Hold to talk (or Ctrl+Alt+V)">
+          🎙 HOLD
+        </button>
+
+        <!-- Mute toggle (shown in open-mic mode) -->
+        <button id="btnMute" class="btn btn-icon" title="Mute / Unmute">
+          🎙
+        </button>
+
+        <!-- Settings stub -->
+        <button id="btnSettings" class="btn btn-icon" title="Settings">⚙</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Settings panel (slide-in) ───────────────────────────────────────── -->
+  <div id="settingsPanel" class="settings-panel">
+    <div class="settings-header">
+      <span>Settings</span>
+      <button id="btnSettingsClose" class="btn btn-icon">✕</button>
+    </div>
+    <div class="settings-body">
+      <label class="field-label">VAD sensitivity</label>
+      <div class="slider-row">
+        <input type="range" id="sliderVAD" min="1" max="50" value="10" />
+        <span id="sliderVADVal">10</span>
+      </div>
+      <p class="settings-hint">Higher = less sensitive (good for noisy setups)</p>
+
+      <label class="field-label" style="margin-top:16px">Per-peer volume</label>
+      <div id="volumeControls"><!-- populated by JS --></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
